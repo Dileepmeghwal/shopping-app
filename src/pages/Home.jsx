@@ -12,21 +12,14 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [searchFilter, setSearchFilter] = useState([]);
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const itemsPerPage = 10;
 
   useEffect(() => {
     getProductList();
-  }, [currentPage, itemsPerPage]);
+  }, []);
 
   const getProductList = (offset, limit) => {
     setLoading(true);
-    get(
-      `https://api.escuelajs.co/api/v1/products?offset=${
-        (currentPage - 1) * itemsPerPage
-      }&limit=${itemsPerPage}`
-    )
+    get(`https://api.escuelajs.co/api/v1/products`)
       .then((res) => {
         console.log(res);
         const productList = res.map((item) => {
@@ -51,14 +44,10 @@ const Home = () => {
         console.log("productList", productList);
         setProducts(productList);
         setSearchFilter(productList);
-        setTotalPages(res);
+
         setLoading(false);
       })
       .catch((error) => console.error(error));
-  };
-  const totalPage = Math.ceil(totalItems / itemsPerPage);
-  const handlepageChage = (page) => {
-    setCurrentPage(page);
   };
 
   const searchHandler = (e) => {
@@ -111,14 +100,7 @@ const Home = () => {
           )}
         </div>
 
-        <Pagination
-          className="flex justify-center mt-10"
-          defaultCurrent={1}
-          current={currentPage}
-          total={totalPages}
-          onChange={handlepageChage}
-          pageSize={itemsPerPage}
-        />
+        <Pagination className="flex justify-center mt-10" defaultCurrent={1} pageSize={10} />
       </div>
     </>
   );
