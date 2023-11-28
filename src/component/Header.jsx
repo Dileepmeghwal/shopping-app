@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import {ShoppingCartOutlined } from '@ant-design/icons'
+import { ShoppingCartOutlined } from "@ant-design/icons";
+import { CartContext, CartProvider } from "../context/CartContext";
+import { Avatar, Badge, Space } from "antd";
 const Header = () => {
+  const { counter } = useContext(CartContext);
   return (
     <header className="py-4 bg-slate-800 ">
       <div className="flex container mx-auto justify-self-center align-middle justify-between">
@@ -20,7 +23,12 @@ const Header = () => {
               <Link>Blog</Link>
             </li>
             <li className="text-white">
-              <div><ShoppingCartOutlined size={'100'}/></div>
+              <div>
+                <Badge count={counter}>
+                  <Avatar shape="square" icon={<ShoppingCartOutlined size={"100"} />}/>
+                </Badge>
+                
+              </div>
             </li>
           </ul>
         </div>
