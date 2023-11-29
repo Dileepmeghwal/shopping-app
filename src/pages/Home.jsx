@@ -2,15 +2,22 @@ import React, { useEffect, useState } from "react";
 import Banner from "../component/Banner";
 import Product from "../component/Product";
 import Header from "../component/Header";
-import { get } from "../Network/ApiCalling";
+import { get, post } from "../Network/ApiCalling";
 import Search from "../component/Search";
-import { Button, Pagination, message } from "antd";
+import { Button, Pagination, message, Modal, Form, Input } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import { Col, InputNumber, Row, Slider, Space, Dropdown } from "antd";
 import { CartProvider } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+
+const onFinish = (values) => {
+  console.log("Success:", values);
+};
+const onFinishFailed = (errorInfo) => {
+  console.log("Failed:", errorInfo);
+};
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -24,6 +31,12 @@ const Home = () => {
   const [optionList, setOptionList] = useState([]);
   const [priceFilter, setPriceFilter] = useState([]);
   const [userDetails, setUserDetails] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [productName, setProductName] = useState("");
+  const [category, setCategory] = useState("");
+  const [price, setPrice] = useState("");
+  const [productImg, setProductImg] = useState("");
+  const [description, setDescrition] = useState("");
 
   const { accessToken, logout } = useAuth();
 
@@ -147,6 +160,24 @@ const Home = () => {
     }
   };
 
+  const createNewProduct = () => {
+    post(`https://api.escuelajs.co/api/v1/products/`, {
+      title: productName,
+      price: price,
+      description: description,
+      categoryId: category,
+      images: [productImg],
+    })
+      .then((res) => {
+        console.log(res);
+        getProductList();
+        setIsModalOpen(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <CartProvider>
       <Header data={userDetails} />
@@ -187,9 +218,107 @@ const Home = () => {
           </Row>
         </div>
       </div>
-      <div></div>
-      <div className="container mx-auto">
+
+      <Modal
+        title="Create New Product"
+        okType="danger"
+        open={isModalOpen}
+        onOk={createNewProduct}
+        onCancel={() => setIsModalOpen(false)}
+      >
+        <Form
+          name="basic"
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+          <Form.Item
+            name="name"
+            rules={[
+              {
+                required: true,
+                message: "Please input your name!",
+              },
+            ]}
+          >
+            <Input
+              size="large"
+              placeholder="Product Name"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            rules={[
+              {
+                required: true,
+                message: "Please input your email!",
+              },
+            ]}
+          >
+            <Input
+              value={price}
+              placeholder="Price"
+              onChange={(e) => setPrice(e.target.value)}
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item
+            rules={[
+              {
+                required: true,
+                message: "Please input your email!",
+              },
+            ]}
+          >
+            <Input
+              value={description}
+              placeholder="description"
+              onChange={(e) => setDescrition(e.target.value)}
+              size="large"
+            />
+          </Form.Item>
+          <Form.Item
+            rules={[
+              {
+                required: true,
+                message: "Please input your email!",
+              },
+            ]}
+          >
+            <Input
+              value={category}
+              placeholder="category id"
+              onChange={(e) => setCategory(e.target.value)}
+              size="large"
+            />
+          </Form.Item>
+          <Form.Item>
+            <Input
+              value={productImg}
+              placeholder="Pase Image URL"
+              onChange={(e) => setProductImg(e.target.value)}
+              size="large"
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <div className="container mx-auto flex justify-end">
+      <Button
+        type="primary"
+        className="bg-blue-600 text-white"
+        onClick={() => setIsModalOpen(true)}
+      >
+        Add Product
+      </Button>
+      </div>
+      <div className="container mx-auto  ">
         <span className=" italic text-red-500 font-semibold md:m-3">{`${products.length} found`}</span>
+
         <div className="grid  grid-cols-1 2xl:grid-cols-4 lg:grid-cols-3 gap-5  m-3  dark:bg-slate-800  bg-white">
           {products.length === 0 || products.length === null ? (
             <p className="  font-sans italic text-center">

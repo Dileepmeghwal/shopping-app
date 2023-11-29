@@ -57,9 +57,9 @@ const Header = ({ data }) => {
                     alt=""
                     className="inline-block h-8 w-8 rounded-full ring-2 ring-whit"
                   />
-                  <span>{data.name}</span>
+                  {/* <span>{data.name}</span> */}
                 </div>
-                <div className="login" onClick={logout}>
+                <div className="login cursor-pointer" onClick={logout}>
                   {accessToken ? (
                     <LoginOutlined className="text-white" />
                   ) : (

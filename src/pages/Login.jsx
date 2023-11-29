@@ -15,14 +15,14 @@ const onFinishFailed = (errorInfo) => {
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError]=useState("")
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const { login} = useAuth();
+  const { login } = useAuth();
   const navigation = useNavigate();
 
-
-
   const loginHandler = () => {
+    setLoading(true);
     post(`https://api.escuelajs.co/api/v1/auth/login`, {
       email: email,
       password: password,
@@ -30,14 +30,11 @@ const Login = () => {
       .then((res) => {
         console.log(res);
         login(res.access_token);
-        setTimeout(() => {
-          success();
-        }, 2000);
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
-        setError(error.response.data.message)
-        error();
+        setError(error.response.data.message);
       });
   };
 
@@ -46,8 +43,6 @@ const Login = () => {
     loginHandler();
   };
 
-  
-
   const [messageApi, contextHolder] = message.useMessage();
   const success = () => {
     messageApi.open({
@@ -55,7 +50,7 @@ const Login = () => {
       content: "This is a success message",
     });
   };
- 
+
   const warning = () => {
     messageApi.open({
       type: "warning",
@@ -65,23 +60,14 @@ const Login = () => {
 
   return (
     <>
-      <div className="h-screen w-full border bg-gradient-to-r from-cyan-500 to-blue-500">
+      <div className=" mt-32">
         <div className="mt-50"> {contextHolder}</div>
-      
-        <div className="md:w-2/4 mx-auto p-5 m-10">
+
+        <div className="max-w-sm mx-auto">
           <div className="bg-white dark:bg-slate-900 rounded-lg px-6 py-8 ring-1 ring-slate-900/5 shadow-xl">
             <Form
               onSubmitCapture={handleSubmit}
               name="basic"
-              labelCol={{
-                span: 8,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              style={{
-                maxWidth: 600,
-              }}
               initialValues={{
                 remember: true,
               }}
@@ -90,7 +76,6 @@ const Login = () => {
               autoComplete="off"
             >
               <Form.Item
-                label="Email"
                 name="email"
                 rules={[
                   {
@@ -100,15 +85,14 @@ const Login = () => {
                 ]}
               >
                 <Input
-                  //   value={userData.email}
+                  placeholder="example@gmail.com"
                   value={email}
-                  //   onChange={handleUser}
                   onChange={(e) => setEmail(e.target.value)}
+                  size="large"
                 />
               </Form.Item>
 
               <Form.Item
-                label="Password"
                 name="password"
                 rules={[
                   {
@@ -118,41 +102,30 @@ const Login = () => {
                 ]}
               >
                 <Input.Password
-                  //   value={userData.password}
                   value={password}
-                  //    onChange={handleUser}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  size="large"
                 />
               </Form.Item>
 
-              <Form.Item
-                name="remember"
-                valuePropName="checked"
-                wrapperCol={{
-                  offset: 8,
-                  span: 16,
-                }}
-              >
+              {/* <Form.Item name="remember" valuePropName="checked">
                 <Checkbox>Remember me</Checkbox>
-              </Form.Item>
+              </Form.Item> */}
 
-              <Form.Item
-                wrapperCol={{
-                  offset: 8,
-                  span: 16,
-                }}
-              >
+              <Form.Item>
                 <Button
                   type="primary"
-                  className="bg-slate-800"
+                  className="bg-slate-800 w-full mx-auto"
                   htmlType="submit"
+                  size="large"
                 >
                   Login
                 </Button>
               </Form.Item>
             </Form>
             {error && <p className="text-red-600">{error}</p>}
-            <span>
+            <span className="block text-center">
               Create an account ?
               <Link to="/register" className=" text-blue-600">
                 {" "}

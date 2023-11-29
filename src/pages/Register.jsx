@@ -14,6 +14,7 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [avatar, setAvatar] = useState(null);
   const navigation = useNavigate();
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -42,8 +43,7 @@ const Register = () => {
       name: name,
       email: email,
       password: password,
-      avatar:
-        "https://images.unsplash.com/photo-1611747581637-a4c0993020ad?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDN8fHxlbnwwfHx8fHw%3D",
+      avatar: avatar,
     })
       .then((res) => {
         console.log(res);
@@ -53,23 +53,14 @@ const Register = () => {
       .catch((error) => console.error(error), error());
   };
   return (
-    <div className="h-screen w-full border bg-gradient-to-r from-cyan-500 to-blue-500">
+    <div className="">
       {contextHolder}
 
-      <div className="md:w-2/4 mx-auto p-5 m-10">
+      <div className="max-w-sm mx-auto mt-32">
         <div className="bg-white dark:bg-slate-900 rounded-lg px-6 py-8 ring-1 ring-slate-900/5 shadow-xl">
           <Form
             onSubmitCapture={handleRegister}
             name="basic"
-            labelCol={{
-              span: 8,
-            }}
-            wrapperCol={{
-              span: 16,
-            }}
-            style={{
-              maxWidth: 600,
-            }}
             initialValues={{
               remember: true,
             }}
@@ -78,7 +69,6 @@ const Register = () => {
             autoComplete="off"
           >
             <Form.Item
-              label="Name"
               name="name"
               rules={[
                 {
@@ -87,11 +77,14 @@ const Register = () => {
                 },
               ]}
             >
-              <Input value={name} onChange={(e) => setName(e.target.value)} />
+              <Input
+                size="large"
+                placeholder="Enter Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </Form.Item>
             <Form.Item
-              label="Email"
-              name="email"
               rules={[
                 {
                   required: true,
@@ -99,11 +92,15 @@ const Register = () => {
                 },
               ]}
             >
-              <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Input
+                value={email}
+                placeholder="example@gmail.com"
+                onChange={(e) => setEmail(e.target.value)}
+                size="large"
+              />
             </Form.Item>
 
             <Form.Item
-              label="Password"
               name="password"
               rules={[
                 {
@@ -114,27 +111,33 @@ const Register = () => {
             >
               <Input.Password
                 value={password}
+                placeholder="Password"
+                size="large"
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Item>
+            <Form.Item>
+              <Input
+                value={avatar}
+                placeholder="Pase Image URL"
+                onChange={(e) => setAvatar(e.target.value)}
+                size="large"
+              />
+            </Form.Item>
 
-            <Form.Item
-              wrapperCol={{
-                offset: 8,
-                span: 16,
-              }}
-            >
+            <Form.Item>
               <Button
+                size="large"
                 type="primary"
                 htmlType="submit"
-                className="bg-slate-800 hover:bg-slate-600"
+                className="bg-slate-800 hover:bg-slate-600 w-full text-white hover:text-white"
               >
-                Submit
+                Register
               </Button>
             </Form.Item>
           </Form>
 
-          <span className="text-center">
+          <span className="block text-center">
             I have an account{" "}
             <Link to="/" className="text-blue-700 ">
               Login
