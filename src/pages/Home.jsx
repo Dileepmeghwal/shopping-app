@@ -9,6 +9,8 @@ import { DownOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import { Col, InputNumber, Row, Slider, Space, Dropdown } from "antd";
 import { CartProvider } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -21,9 +23,13 @@ const Home = () => {
   const [inputValue, setInputValue] = useState(1);
   const [optionList, setOptionList] = useState([]);
   const [priceFilter, setPriceFilter] = useState([]);
+  const [userDetails, setUserDetails] = useState([]);
+
+  const { accessToken, logout } = useAuth();
 
   useEffect(() => {
     getProductList();
+    userProfile();
   }, []);
 
   const getProductList = () => {
@@ -49,7 +55,7 @@ const Home = () => {
             images,
           };
         });
-        console.log("productList", productList);
+        // console.log("productList", productList);
         setProducts(productList);
         setSearchFilter(productList);
         setFilterCategory(productList);
@@ -107,11 +113,11 @@ const Home = () => {
     return options.push(element.category.name);
   });
   const uniq = [...new Set(options)];
-  console.log("options", options);
-  console.log("uniq", uniq);
+  // console.log("options", options);
+  // console.log("uniq", uniq);
 
   const selectOptionHandle = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
 
     const selectedOption = e.target.value;
     console.log(selectedOption);
@@ -126,17 +132,32 @@ const Home = () => {
     }
   };
 
+  const userProfile = async () => {
+    try {
+      const url = "https://api.escuelajs.co/api/v1/auth/profile";
+
+      axios
+        .get(url, { headers: { Authorization: `Bearer ${accessToken}` } })
+        .then((res) => {
+          console.log(res.data);
+          setUserDetails(res.data);
+        });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   return (
     <CartProvider>
-      <Header />
+      <Header data={userDetails} />
 
-      <div className="grid grid-cols-1 gap-3 mx-auto container md:m-2 m-2 md:grid-cols-3">
+      <div className="md:flex md:w-9/12 mx-auto justify-between container mb-3 mt-4">
         <Search value={search} onChange={searchHandler} />
 
         <select
           name="category"
           id=""
-          className="border-width-1 border outline-1 focus-within:outline-2 p-2 mx-3 rounded-lg "
+          className="border-width-1 border outline-1 focus-within:outline-2 p-2 mx-3 rounded-lg w-30"
           value={select}
           onChange={selectOptionHandle}
         >
@@ -166,7 +187,7 @@ const Home = () => {
           </Row>
         </div>
       </div>
-
+      <div></div>
       <div className="container mx-auto">
         <span className=" italic text-red-500 font-semibold md:m-3">{`${products.length} found`}</span>
         <div className="grid  grid-cols-1 2xl:grid-cols-4 lg:grid-cols-3 gap-5  m-3  dark:bg-slate-800  bg-white">
@@ -192,59 +213,6 @@ const Home = () => {
             })
           )}
         </div>
-
-        {/* <Pagination
-          className="flex justify-center mt-10"
-          defaultCurrent={1}
-          total={100}
-          current={pages}
-          onChange={(value) => setPages(value)}
-        /> */}
-        {/* <div>
-          <ul>
-            {products.map((item) => (
-              <li key={item.id}>{item.name}</li>
-            ))}
-          </ul>
-          <nav aria-label="Page navigation example">
-            <ul className="pagination">
-              <li className="page-item">
-                <a
-                  className="page-link"
-                  href="#"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                >
-                  Previous
-                </a>
-              </li>
-              {Array.from({ length: totalPages }, (_, index) => (
-                <li
-                  className={`page-item ${
-                    currentPage === index + 1 ? "active" : ""
-                  }`}
-                  key={index}
-                >
-                  <a
-                    className="page-link"
-                    href="#"
-                    // onClick={() => handlePageChange(index + 1)}
-                  >
-                    {index + 1}
-                  </a>
-                </li>
-              ))}
-              <li className="page-item">
-                <a
-                  className="page-link"
-                  href="#"
-                  // onClick={() => handlePageChange(currentPage + 1)}
-                >
-                  Next
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div> */}
       </div>
     </CartProvider>
   );

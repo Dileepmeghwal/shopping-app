@@ -5,15 +5,23 @@ import "./App.css";
 import Home from "./pages/Home";
 import { Route, Routes } from "react-router-dom";
 import ProductDetails from "./pages/ProductDetails";
+import Login from "./pages/Login";
+import Header from "./component/Header";
+import { useAuth } from "./context/AuthContext";
+import Register from "./pages/Register";
 
 function App() {
   const [count, setCount] = useState(0);
 
+  const { accessToken, logout } = useAuth();
+
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/products/:id" element={<ProductDetails/>} />
+        {/* <Route path="/home" element={<Home />} /> */}
+        <Route path="/products/:id" element={<ProductDetails />} />
+        <Route path="/" element={accessToken ? <Home /> : <Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </>
   );

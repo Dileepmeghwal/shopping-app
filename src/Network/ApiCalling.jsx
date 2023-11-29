@@ -7,9 +7,15 @@ const axiosInstance = axios.create({
   timeout: 5000,
 });
 
-export const get = async (url, params = {}) => {
+export const get = async (url, params = {},headers) => {
   try {
-    const response = await axiosInstance.get(url, { params });
+    const response = await axiosInstance.get(url, {
+      params,
+      headers: {
+        ...headers,
+        // Add any other headers you need
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;
